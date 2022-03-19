@@ -96,15 +96,14 @@ class Camera:
         return defVal
 
     def capture(self):
+        # 实例化一个yolov5对象
+        yolonet = yolov5(modelpath='weights/yolov5x.onnx', confThreshold=0.3, nmsThreshold=0.5,objThreshold=0.3)
         frame_duration = 1. / self.framerate
         while not self.stop_capture:
             start = time.time()
             ret, frame = self.cap.read()
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                # 实例化一个yolov5对象
-                yolonet = yolov5(modelpath='weights/yolov5x.onnx', confThreshold=0.3, nmsThreshold=0.5,
-                                 objThreshold=0.3)
                 srcimg = yolonet.detect(frame)
                 img = Image.fromarray(srcimg)
                 img.save(self.output, format='JPEG')
